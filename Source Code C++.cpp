@@ -58,11 +58,6 @@ MODULEENTRY32 GetModule(const char* moduleName, unsigned long ProcessID)
 int main()
 {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
-	if (FindWindow(NULL, "Minecraft: Education Edition") == NULL)
-	{
-		MessageBox(NULL, "An Error Occured:\nPlease Launch Minecraft: Education Edition", "MC-EDU ALBS", NULL);
-		exit(-1);
-	}
 	MessageBox(NULL,"Controls:\nDEL - Exits Albs Software\nINSERT - Preforms ALBS Auto Login Bypass\nHOME - Brings Back The Controlls Page","MC-EDU ALBS",NULL);
 	unsigned long long pid = GetPID("Minecraft.Windows.exe");
 	MODULEENTRY32 module = GetModule("Minecraft.Windows.exe", pid);
@@ -75,18 +70,29 @@ int main()
 
 	int result;
 	int lgin = 8;
-	while (1)
+	while (true)
 	{
 		if (GetAsyncKeyState(VK_INSERT) & 0x8000)
 		{
-			ReadProcessMemory(phandle, (void*)((unsigned long long)module.modBaseAddr + 0x02CC015C), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x7C), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x64), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
-			ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x2E4), &result, sizeof(result), 0);
-			WriteProcessMemory(phandle, (void*)((unsigned long long)result + 0x8), &lgin, sizeof(lgin), 0);
+			if (FindWindow(NULL, "Minecraft: Education Edition") == NULL)
+			{
+				MessageBox(NULL, "An Error Occured:\nCould Not Login Bypass Try Reopening Minecraft: Education Edition", "MC-EDU ALBS", NULL);
+			}
+			if (FindWindow(NULL, "Minecraft: Education Edition") != NULL)
+			{
+				pid = GetPID("Minecraft.Windows.exe");
+				MODULEENTRY32 module = GetModule("Minecraft.Windows.exe", pid);
+				HANDLE phandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+
+				ReadProcessMemory(phandle, (void*)((unsigned long long)module.modBaseAddr + 0x02CC015C), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x7C), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x64), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x0), &result, sizeof(result), 0);
+				ReadProcessMemory(phandle, (void*)((unsigned long long)result + 0x2E4), &result, sizeof(result), 0);
+				WriteProcessMemory(phandle, (void*)((unsigned long long)result + 0x8), &lgin, sizeof(lgin), 0);
+			}
 			Sleep(200);
 		}
 		if (GetAsyncKeyState(VK_DELETE) & 0x8000)
